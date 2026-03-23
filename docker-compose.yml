@@ -1,0 +1,22 @@
+services:
+  lbp6000-printer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lbp6000-server
+    restart: always
+    privileged: true # КРИТИЧНО для доступу до USB
+    network_mode: host # Дозволяє бачити принтер у мережі без складних прокидань портів
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb # Прокидаємо USB шину
+      - cups-config:/etc/cups     # Зберігаємо налаштування принтера
+      - cups-certs:/etc/cups/ssl  # Зберігаємо сертифікати (опціонально)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  cups-config:
+  cups-certs:
