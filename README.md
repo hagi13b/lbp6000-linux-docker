@@ -14,6 +14,7 @@
 - `docker-compose.yml` — конфігурація запуску  
 - `cndrvcups-common_3.20-1_amd64.deb` — спільні компоненти драйвера  
 - `cndrvcups-capt_2.70-1_amd64.deb` — драйвер CAPT  
+- `setup-printer-host.sh` — скрипт для налаштування Avahi та mDNS анонсу  
 
 ---
 
@@ -42,6 +43,16 @@ ls /dev/usb/lp0
 ```
 
 Команда повинна показувати пристрій.
+
+### 4. Налаштуйте Avahi для mDNS анонсу
+
+Скрипт `setup-printer-host.sh` автоматизує налаштування Avahi для анонсування принтера через mDNS. Виконайте:
+
+```bash
+sudo ./setup-printer-host.sh
+```
+
+Це забезпечить доступність принтера через Bonjour/Avahi.
 
 ---
 
