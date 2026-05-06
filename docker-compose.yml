@@ -5,12 +5,12 @@ services:
       dockerfile: Dockerfile
     container_name: lbp6000-server
     restart: always
-    privileged: true # КРИТИЧНО для доступу до USB
-    network_mode: host # Дозволяє бачити принтер у мережі без складних прокидань портів
+    privileged: true # 重要: USBデバイスへの直接アクセスのために必要
+    network_mode: host # 複雑なポートマッピングなしでネットワーク上のプリンタを認識させるため
     volumes:
-      - /dev/bus/usb:/dev/bus/usb # Прокидаємо USB шину
-      - cups-config:/etc/cups     # Зберігаємо налаштування принтера
-      - cups-certs:/etc/cups/ssl  # Зберігаємо сертифікати (опціонально)
+      - /dev/bus/usb:/dev/bus/usb # USBバスをマウント
+      - cups-config:/etc/cups     # プリンタ設定を保持
+      - cups-certs:/etc/cups/ssl  # 証明書を保持（オプション）
     logging:
       driver: "json-file"
       options:

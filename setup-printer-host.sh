@@ -1,24 +1,24 @@
 #!/bin/bash
 
-# Налаштування
+# 設定
 SERVICE_FILE="/etc/avahi/services/lbp6000.service"
 PRINTER_NAME="Canon LBP6000"
 PRINTER_IP=$(hostname -I | awk '{print $1}')
 
-echo "--- Початок налаштування хоста для Canon LBP6000 ---"
+echo "--- Canon LBP6000 ホスト側設定を開始します ---"
 
-# 1. Встановлення Avahi, якщо його немає
+# 1. Avahi がインストールされていない場合はインストール
 if ! dpkg -l | grep -q avahi-daemon; then
-    echo "[1/3] Встановлення avahi-daemon..."
+    echo "[1/3] avahi-daemon をインストールしています..."
     sudo apt-get update && sudo apt-get install -y avahi-daemon avahi-utils
 else
-    echo "[1/3] avahi-daemon вже встановлено."
+    echo "[1/3] avahi-daemon は既にインストールされています。"
 fi
 
-# 2. Створення конфігурації сервісу
-echo "[2/3] Налаштування mDNS анонсу..."
+# 2. サービス設定ファイルの作成
+echo "[2/3] mDNS 通知の設定中..."
 
-# Тимчасовий файл для порівняння
+# 比較用のテンポラリファイル
 TEMP_CONF=$(mktemp)
 
 cat <<EOF > "$TEMP_CONF"
@@ -41,33 +41,33 @@ cat <<EOF > "$TEMP_CONF"
 </service-group>
 EOF
 
-# Перевіряємо, чи змінився конфіг, щоб не смикати сервіс дарма
+# 設定に変更がある場合のみ更新し、サービスの再起動フラグを立てる
 if [ ! -f "$SERVICE_FILE" ] || ! cmp -s "$TEMP_CONF" "$SERVICE_FILE"; then
-    echo "Оновлення конфігурації в $SERVICE_FILE"
+    echo "$SERVICE_FILE の設定を更新します"
     sudo cp "$TEMP_CONF" "$SERVICE_FILE"
     RESTART_NEEDED=true
 else
-    echo "Конфігурація актуальна, зміни не потрібні."
+    echo "設定は最新です。変更は不要です。"
     RESTART_NEEDED=false
 fi
 
 rm "$TEMP_CONF"
 
-# 3. Керування сервісом
-echo "[3/3] Перевірка стану сервісу..."
+# 3. サービスの管理
+echo "[3/3] サービスの状態を確認中..."
 sudo systemctl enable avahi-daemon
 
 if [ "$RESTART_NEEDED" = true ]; then
-    echo "Перезапуск avahi-daemon для застосування змін..."
+    echo "変更を適用するため avahi-daemon を再起動します..."
     sudo systemctl restart avahi-daemon
 else
     if ! systemctl is-active --quiet avahi-daemon; then
-        echo "Старт avahi-daemon..."
+        echo "avahi-daemon を起動します..."
         sudo systemctl start avahi-daemon
     else
-        echo "Avahi вже працює з актуальним конфігом."
+        echo "Avahi は最新の設定で既に動作しています。"
     fi
 fi
 
-echo "--- Налаштування завершено успішно! ---"
-echo "Принтер має бути доступний як: $PRINTER_NAME"
+echo "--- 設定完了 ---"
+echo "プリンタ名: $PRINTER_NAME として検出されるはずです。"
