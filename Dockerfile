@@ -52,7 +52,7 @@ sed -i "s/<Location \/admin>/<Location \/admin>\\n  Allow All/" /etc/cups/cupsd.
 \n\
 # プリンタの登録\n\
 lpadmin -x LBP6000 2>/dev/null\n\
-lpadmin -p LBP6000 -m CNCUPSLBP6018CAPTK.ppd -v ccp://localhost:59687 -E\n\
+lpadmin -p LBP6000 -m CNCUPSLBP6200CAPTJ.ppd -v ccp://localhost:59687 -E\n\
 \n\
 # プリンタを共有設定にし、ジョブを受け付けるように明示\n\
 lpadmin -p LBP6000 -o printer-is-shared=true -u allow:all\n\
